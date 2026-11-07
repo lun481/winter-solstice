@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1220">
+<title>立冬 · 十月节</title>
+<style>
+  :root{
+    --serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "STSong", "SimSun", "Times New Roman", serif;
+    --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --paper: #f0eadc;
+    --paper-dim: rgba(240,234,220,.67);
+    --paper-faint: rgba(240,234,220,.42);
+    --warm: #e8b77d;
+    --ice: #dbeaf0;
+    --ease: cubic-bezier(.16,1,.3,1);
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{
+    background:#0a1220;
+    scroll-behavior:auto;
+    overscroll-behavior-y:none;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+  body{
+    margin:0;
+    min-width:280px;
+    background:#0a1220;
+    color:var(--paper);
+    font-family:var(--serif);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    touch-action:pan-y;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none;
+  }
+  ::selection{ background:rgba(217,177,123,.25); }
+  #sky,#sky canvas{ position:fixed; inset:0; width:100%; height:100%; display:block; }
+  #sky{ z-index:auto; pointer-events:none; }
+  #back{ z-index:0; }
+  #front{ z-index:4; pointer-events:none; }
+  .vignette{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 48% 38%, transparent 38%, rgba(3,7,14,.20) 72%, rgba(2,5,10,.52) 100%),
+      linear-gradient(to bottom, rgba(4,8,15,.10) 0%, transparent 25%, transparent 68%, rgba(2,6,12,.30) 100%);
+  }
+  .grain{
+    position:fixed; inset:-20%; z-index:5; pointer-events:none; opacity:.032;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.84' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.65'/></svg>");
+    mix-blend-mode:soft-light;
+  }
+  #story{ position:relative; z-index:2; width:100%; }
+  .scene{
+    position:relative; width:100%; min-height:100vh; min-height:100dvh;
+    overflow:hidden;
+  }
+  @supports (height:100svh){ .scene{ min-height:100svh; } }
+
+  .masthead{
+    position:absolute;
+    top:calc(clamp(20px,5.4svh,58px) + env(safe-area-inset-top));
+    right:clamp(22px,7.5vw,120px);
+    display:flex; align-items:center; gap:clamp(8px,.9vw,14px);
+    font-family:var(--sans);
+    font-size:clamp(8px,.75vw,10px);
+    letter-spacing:.34em;
+    color:rgba(242,235,220,.52);
+    white-space:nowrap;
+  }
+  .m-line{ width:clamp(22px,3.5vw,52px); height:1px; background:rgba(240,234,220,.28); }
+  .hero-block{
+    position:absolute;
+    left:clamp(22px,7.6vw,128px);
+    top:clamp(94px,20svh,230px);
+    max-width:min(35rem,48vw);
+  }
+  .chapter,.kicker{
+    display:flex; align-items:center; gap:.78em;
+    margin:0 0 clamp(13px,2.2svh,24px);
+    font-family:var(--sans);
+    font-size:clamp(9px,.78vw,11px);
+    font-weight:400;
+    letter-spacing:.34em;
+    color:var(--paper-faint);
+    line-height:1.8;
+  }
+  .chapter b,.kicker b{
+    font-weight:400;
+    letter-spacing:.24em;
+    color:rgba(231,190,135,.86);
+  }
+  .k-line{
+    display:inline-block; width:31px; height:1px; flex:0 0 auto;
+    background:linear-gradient(90deg,rgba(231,190,135,.42),transparent);
+  }
+  .hero-title{
+    margin:0;
+    display:flex; flex-direction:column; align-items:flex-start;
+    font-family:var(--serif);
+    font-size:clamp(88px,13.4vw,186px);
+    font-weight:400;
+    line-height:.84;
+    letter-spacing:.01em;
+    color:rgba(246,241,229,.96);
+    text-shadow:0 2px 30px rgba(2,7,14,.30);
+  }
+  .hero-title .char{ display:block; transform-origin:0 50%; }
+  .hero-title .char:last-child{
+    margin-top:.08em;
+    color:rgba(238,230,215,.73);
+  }
+  .hero-sub{
+    margin:clamp(20px,3.2svh,34px) 0 0;
+    display:flex; align-items:center; gap:13px;
+    font-family:var(--sans);
+    font-size:clamp(8px,.63vw,9.5px);
+    letter-spacing:.33em;
+    color:rgba(240,234,220,.42);
+  }
+  .hero-sub::before{ content:""; width:38px; height:1px; background:rgba(240,234,220,.24); }
+  .hero-quote{
+    margin:15px 0 0;
+    width:24em; max-width:78%;
+    font-size:clamp(10px, .78vw, 12px);
+    line-height:2.05;
+    letter-spacing:.12em;
+    color:rgba(240,234,220,.50);
+  }
+
+  .copy{
+    position:absolute;
+    z-index:1;
+    padding:0;
+    text-shadow:
+      0 1px 2px rgba(2,5,10,.50),
+      0 4px 22px rgba(2,5,11,.56),
+      0 14px 46px rgba(2,5,11,.26);
+  }
+  .copy p{ margin:0; }
+  .copy p + p{ margin-top:.88em; }
+  .copy .lead{
+    margin-bottom:1.05em;
+    font-size:clamp(20px,1.42vw,25px);
+    line-height:1.75;
+    letter-spacing:.05em;
+    color:rgba(248,243,232,.97);
+  }
+  .copy .lead + p{ margin-top:0; }
+  .lines{
+    font-size:clamp(14px,.95vw,16.5px);
+    line-height:2.08;
+    letter-spacing:.055em;
+    color:rgba(243,237,225,.90);
+  }
+  .lines p{ max-width:34em; }
+  .lines .soft{ color:rgba(235,228,214,.64); }
+  .lines .warm{ color:rgba(241,205,160,.92); }
+  .lines .speech{
+    color:rgba(247,241,229,.96);
+    font-style:normal;
+    letter-spacing:.08em;
+  }
+  .fine{
+    margin-top:clamp(18px,2.8svh,28px) !important;
+    font-family:var(--sans);
+    font-size:clamp(8.5px,.68vw,10px);
+    line-height:1.9;
+    letter-spacing:.26em;
+    color:rgba(240,234,220,.40);
+  }
+  .copy-1{
+    right:clamp(24px,8vw,132px);
+    bottom:calc(clamp(52px,11.5svh,150px) + env(safe-area-inset-bottom));
+    width:min(35rem,45vw);
+  }
+  .copy-1 .lines{ font-size:clamp(14px,.92vw,16px); }
+
+  .copy-2{
+    left:clamp(22px,8.7vw,144px);
+    top:clamp(104px,23svh,258px);
+    width:min(33rem,52vw);
+  }
+  .vnote{
+    position:absolute;
+    writing-mode:vertical-rl;
+    font-size:clamp(9px,.7vw,10.5px);
+    letter-spacing:.34em;
+    color:rgba(236,229,215,.27);
+    line-height:2.1;
+    pointer-events:none;
+  }
+  .vnote-2{
+    right:clamp(28px,9vw,142px);
+    top:48svh;
+  }
+
+  .s3 .note-a{
+    left:clamp(22px,9vw,150px);
+    top:clamp(94px,16svh,190px);
+    width:min(29rem,43vw);
+  }
+  .s3 .note-b{
+    right:clamp(24px,9.5vw,152px);
+    bottom:calc(clamp(62px,14svh,160px) + env(safe-area-inset-bottom));
+    width:min(28rem,42vw);
+    text-align:left;
+  }
+
+  .copy-4{
+    left:51.5%;
+    right:clamp(24px,7.5vw,120px);
+    top:clamp(112px,23svh,250px);
+    width:auto;
+    max-width:33rem;
+  }
+  .copy-4 .lines p{ max-width:27em; }
+  .postmark{
+    margin-top:clamp(20px,3svh,30px);
+    display:flex; align-items:center; gap:12px;
+    font-family:var(--sans); font-size:9px; letter-spacing:.3em;
+    color:rgba(240,234,220,.34);
+  }
+  .postmark i{ display:block; width:26px; height:1px; background:rgba(240,234,220,.22); }
+
+  .copy-5{
+    left:clamp(22px,8.7vw,142px);
+    bottom:calc(clamp(58px,12.5svh,160px) + env(safe-area-inset-bottom));
+    width:min(33rem,49vw);
+  }
+  .copy-5 .lead{ max-width:11em; }
+
+  .copy-6{
+    left:clamp(22px,9vw,148px);
+    top:clamp(108px,23svh,252px);
+    width:min(38rem,58vw);
+  }
+  .copy-6 .lines p{ max-width:26em; }
+  .copy-6 .blessing{
+    margin-top:1.5em;
+    padding-top:1.3em;
+    border-top:1px solid rgba(240,234,220,.15);
+    font-size:clamp(16px,1.13vw,19px);
+    line-height:2.15;
+    letter-spacing:.07em;
+    color:rgba(247,241,228,.96);
+  }
+  .end-row{
+    margin-top:clamp(22px,3.6svh,38px) !important;
+    display:flex; align-items:center; gap:15px;
+    font-family:var(--sans);
+    font-size:clamp(8.5px,.66vw,10px);
+    letter-spacing:.3em;
+    color:rgba(237,229,214,.40);
+  }
+  .end-row .e-line{ width:clamp(38px,5vw,72px); height:1px; background:rgba(240,234,220,.20); }
+  .seal{
+    display:inline-grid; place-items:center;
+    width:29px; height:29px; flex:0 0 auto;
+    border:1px solid rgba(184,93,72,.48);
+    color:rgba(207,119,95,.78);
+    font-family:var(--serif);
+    font-size:12px;
+    line-height:1;
+    letter-spacing:0;
+    transform:rotate(-2deg);
+    opacity:.9;
+  }
+  .seal.large{ width:38px; height:38px; font-size:14px; margin-top:6px; }
+
+  .reveal{
+    opacity:1;
+    transform:none;
+    filter:none;
+  }
+  .js .reveal{
+    opacity:0;
+    transform:translate3d(0,24px,0);
+    filter:blur(7px);
+    transition:
+      opacity 1.65s ease var(--d,0s),
+      transform 1.75s var(--ease) var(--d,0s),
+      filter 1.6s ease var(--d,0s);
+    will-change:opacity, transform, filter;
+  }
+  .js .scene.is-live .reveal{
+    opacity:1;
+    transform:translate3d(0,0,0);
+    filter:blur(0);
+  }
+  .js .scene.is-live .reveal{ will-change:auto; }
+  .js .hero-title .char{
+    opacity:0;
+    transform:translate3d(0,28px,0);
+    filter:blur(8px);
+    transition:opacity 2s ease var(--d,0s), transform 2.1s var(--ease) var(--d,0s), filter 1.9s ease var(--d,0s);
+  }
+  .js .scene.is-live .hero-title .char{ opacity:1; transform:none; filter:blur(0); }
+
+  #progress{
+    position:fixed; z-index:7; pointer-events:none;
+    right:clamp(11px,1.4vw,25px);
+    top:27svh; height:46svh; width:1px;
+    background:rgba(237,230,216,.075);
+  }
+  #progressFill{
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    background:linear-gradient(to bottom, rgba(242,235,220,.06), rgba(242,235,220,.38));
+    transform-origin:top; transform:scaleY(0);
+    will-change:transform;
+  }
+  #hint{
+    position:fixed; z-index:7; pointer-events:none;
+    left:50%; bottom:calc(20px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);
+    display:flex; align-items:center; gap:10px;
+    white-space:nowrap;
+    font-family:var(--sans);
+    font-size:clamp(8.5px,.72vw,10px);
+    letter-spacing:.20em;
+    color:rgba(240,234,220,.54);
+    text-shadow:0 1px 8px rgba(2,6,12,.45);
+    animation:hintIn 2.6s ease .7s both;
+    transition:opacity 1.6s ease, transform 1.6s var(--ease);
+  }
+  #hint::before{ content:""; width:1px; height:22px; background:rgba(240,234,220,.25); }
+  #hint .hint-dot{ opacity:.34; }
+  #hint.is-gone{ opacity:0 !important; transform:translate(-50%,8px); }
+  @keyframes hintIn{ from{ opacity:0; transform:translate(-50%,8px);} to{ opacity:1; transform:translate(-50%,0);} }
+  #whispers{
+    position:fixed; inset:0; z-index:4; pointer-events:none; overflow:hidden;
+  }
+  .whisper{
+    position:absolute;
+    max-width:min(72vw,19rem);
+    transform:translate(-50%,0);
+    font-family:var(--serif);
+    font-size:clamp(12px,1.05vw,14px);
+    line-height:1.9;
+    letter-spacing:.13em;
+    text-align:center;
+    color:rgba(238,246,249,.90);
+    text-shadow:0 1px 2px rgba(4,10,18,.55), 0 0 22px rgba(179,218,235,.26);
+    animation:whisper 5.4s cubic-bezier(.2,.75,.2,1) both;
+    will-change:opacity, filter, transform;
+  }
+  @keyframes whisper{
+    0%{ opacity:0; filter:blur(10px); transform:translate(-50%,10px) scale(.99); }
+    17%{ opacity:.92; filter:blur(0); }
+    64%{ opacity:.67; filter:blur(.2px); transform:translate(-50%,-7px); }
+    100%{ opacity:0; filter:blur(8px); transform:translate(-50%,-22px); }
+  }
+
+  @media (max-width:720px){
+    .masthead{
+      right:22px; top:calc(21px + env(safe-area-inset-top));
+      font-size:8px; letter-spacing:.28em; gap:8px;
+    }
+    .m-line{ width:23px; }
+    .hero-block{
+      left:22px; top:calc(13.5svh + env(safe-area-inset-top));
+      max-width:calc(100% - 44px);
+    }
+    .chapter,.kicker{
+      margin-bottom:13px; font-size:9px; letter-spacing:.28em;
+    }
+    .k-line{ width:24px; }
+    .hero-title{
+      font-size:clamp(72px,23.5vw,98px);
+      line-height:.83;
+    }
+    .hero-sub{ margin-top:18px; font-size:7.5px; letter-spacing:.26em; gap:9px; }
+    .hero-sub::before{ width:27px; }
+    .hero-quote{
+      display:none;
+    }
+    .copy-1{
+      left:22px; right:22px; bottom:calc(11svh + env(safe-area-inset-bottom));
+      width:auto;
+    }
+    .copy-1 .lines{ font-size:14px; line-height:2.02; }
+    .copy .lead{ font-size:clamp(18px,5.1vw,21px); line-height:1.8; }
+    .copy-2{
+      left:22px; right:24px; width:auto;
+      top:calc(21svh + env(safe-area-inset-top));
+    }
+    .copy-2 .lines{ font-size:14px; line-height:2.03; }
+    .vnote-2{ right:20px; top:62svh; font-size:8px; letter-spacing:.3em; }
+    .s3 .note-a{
+      left:22px; right:24px; width:auto;
+      top:calc(12.5svh + env(safe-area-inset-top));
+    }
+    .s3 .note-b{
+      left:9vw; right:22px; width:auto;
+      bottom:calc(12svh + env(safe-area-inset-bottom));
+    }
+    .s3 .lines{ font-size:13.5px; line-height:1.98; }
+    .s3 .note-a .lines p{ max-width:24em; }
+    .copy-4{
+      left:clamp(48px,16vw,92px); right:22px;
+      top:calc(19svh + env(safe-area-inset-top));
+      width:auto;
+    }
+    .copy-4 .lines{ font-size:14px; line-height:2.03; }
+    .postmark{ font-size:8px; letter-spacing:.24em; margin-top:17px; }
+    .copy-5{
+      left:22px; right:24px; width:auto;
+      bottom:calc(12svh + env(safe-area-inset-bottom));
+    }
+    .copy-5 .lines{ font-size:14px; line-height:2.04; }
+    .copy-6{
+      left:22px; right:24px; width:auto;
+      top:calc(16svh + env(safe-area-inset-top));
+    }
+    .copy-6 .lines{ font-size:14px; line-height:2.02; }
+    .copy-6 .blessing{ font-size:16px; line-height:2.05; }
+    .copy-6 .fine{ margin-top:17px !important; font-size:8px; }
+    .end-row{ margin-top:20px !important; gap:11px; font-size:8px; letter-spacing:.24em; }
+    .seal{ width:26px; height:26px; font-size:11px; }
+    .copy .fine{ font-size:8px; letter-spacing:.2em; }
+    #progress{ right:8px; top:30svh; height:40svh; }
+    #hint{ bottom:calc(15px + env(safe-area-inset-bottom)); font-size:8px; letter-spacing:.14em; gap:7px; }
+    #hint::before{ height:16px; }
+  }
+  @media (max-width:380px){
+    .lines{ letter-spacing:.03em; }
+    .copy-1 .lines,.copy-2 .lines,.copy-4 .lines,.copy-5 .lines,.copy-6 .lines{ font-size:13.5px; }
+    .s3 .lines{ font-size:13px; }
+    .hero-title{ font-size:clamp(66px,22vw,84px); }
+    .copy-1{ bottom:calc(10svh + env(safe-area-inset-bottom)); }
+  }
+  @media (min-width:721px) and (max-height:760px){
+    .hero-block{ top:13.5svh; }
+    .hero-title{ font-size:clamp(82px,11.8vw,145px); }
+    .hero-sub{ margin-top:16px; }
+    .hero-quote{ margin-top:10px; }
+    .copy-2{ top:20svh; }
+    .copy-4{ top:19svh; }
+    .copy-6{ top:19svh; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .js .reveal,.js .hero-title .char{
+      transform:none !important;
+      filter:none !important;
+      transition-duration:.45s !important;
+      transition-delay:0s !important;
+    }
+    #hint{ animation:none; opacity:1; }
+    .whisper{ animation-duration:3.2s; }
+    .whisper{ filter:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="sky">
+  <canvas id="back" aria-hidden="true"></canvas>
+  <canvas id="front" aria-hidden="true"></canvas>
+</div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main id="story">
+  <section class="scene s1" data-scene="0" aria-label="入冬的风">
+    <div class="masthead reveal" style="--d:.25s">
+      <span>二十四节气</span><i class="m-line"></i><span>十月节</span>
+    </div>
+    <div class="hero-block">
+      <p class="chapter reveal" style="--d:.35s"><b>序</b><span class="k-line"></span>风起</p>
+      <h1 class="hero-title" aria-label="立冬">
+        <span class="char" style="--d:.5s">立</span>
+        <span class="char" style="--d:.72s">冬</span>
+      </h1>
+      <p class="hero-sub reveal" style="--d:1.05s">THE BEGINNING OF WINTER</p>
+      <p class="hero-quote reveal" style="--d:1.2s">“立，建始也；<br>冬，终也，万物收藏也。”</p>
+    </div>
+    <div class="copy copy-1">
+      <div class="lines">
+        <p class="lead reveal" style="--d:1.3s">风从北面来，<br>把黄昏吹薄了一层。</p>
+        <p class="reveal" style="--d:1.46s">晾衣绳上的蓝布衫，一面鼓起，一面又垂下去。</p>
+        <p class="reveal" style="--d:1.62s">母亲收走最后一筐萝卜，门帘落下，院子忽然安静。</p>
+        <p class="reveal" style="--d:1.78s">——冬天，算正式开始了。</p>
+        <p class="fine reveal" style="--d:1.95s">二十四节气 · 第十九 · 水始冰</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene s2" data-scene="1" aria-label="一候 水始冰">
+    <div class="copy copy-2">
+      <p class="kicker reveal"><b>一候</b><span class="k-line"></span>水始冰</p>
+      <div class="lines">
+        <p class="lead reveal" style="--d:.12s">清早，石阶下的水洼，<br>结了一层薄冰。</p>
+        <p class="reveal" style="--d:.28s">昨夜落下的梧桐叶停在上面。叶脉还清晰，像一封没有写完的信。</p>
+        <p class="reveal" style="--d:.44s">有人用脚尖试了试——冰面没有碎，只向远处传来一声很轻的响。</p>
+        <p class="soft reveal" style="--d:.60s">风过时，水面先于土地，记住了冷。</p>
+      </div>
+    </div>
+    <p class="vnote vnote-2 reveal" style="--d:.7s" aria-hidden="true">水面先于土地，记住了冷。</p>
+  </section>
+
+  <section class="scene s3" data-scene="2" aria-label="二候 地始冻 三候 雉入大水为蜃">
+    <div class="copy note-a">
+      <p class="kicker reveal"><b>二候</b><span class="k-line"></span>地始冻</p>
+      <div class="lines">
+        <p class="reveal">锄头落在田埂上，<br>只磕出一声钝响。</p>
+        <p class="reveal" style="--d:.14s">祖父蹲下去，把掌心贴在土上：</p>
+        <p class="speech warm reveal" style="--d:.26s">“底下还暖着。<br>麦根在睡，也在长。”</p>
+        <p class="soft reveal" style="--d:.4s">霜从草尖落下来，土地把一年的话，慢慢收进深处。</p>
+      </div>
+    </div>
+    <div class="copy note-b">
+      <p class="kicker reveal" style="--d:.55s"><b>三候</b><span class="k-line"></span>雉入大水为蜃</p>
+      <div class="lines">
+        <p class="reveal" style="--d:.62s">古书里，雉鸟沉入大水，化成海边若有若无的楼阁。</p>
+        <p class="reveal" style="--d:.76s">看不见的，也在过冬。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene s4" data-scene="3" aria-label="收束与思念">
+    <div class="copy copy-4">
+      <p class="kicker reveal"><b>叁</b><span class="k-line"></span>收束</p>
+      <div class="lines">
+        <p class="lead reveal" style="--d:.1s">母亲打来电话，<br>问屋里暖气热不热。</p>
+        <p class="reveal" style="--d:.25s">我说热。她停了一会儿，又说：</p>
+        <p class="speech reveal" style="--d:.37s">“那就好，别总熬夜。”</p>
+        <p class="reveal" style="--d:.51s">挂了电话，屋里静得能听见水壶轻响。</p>
+        <p class="reveal" style="--d:.66s">冬天把人都赶回屋里，也把想念，收拢成一盏灯那么大。</p>
+      </div>
+      <p class="postmark reveal" style="--d:.82s"><i></i>远处有风，近处有灯</p>
+    </div>
+  </section>
+
+  <section class="scene s5" data-scene="4" aria-label="初雪与灯火">
+    <div class="copy copy-5">
+      <p class="kicker reveal"><b>肆</b><span class="k-line"></span>初雪</p>
+      <div class="lines">
+        <p class="lead reveal" style="--d:.1s">雪是后半夜来的。</p>
+        <p class="reveal" style="--d:.25s">先是听见瓦上沙沙的响，再推门，台阶已经白了。</p>
+        <p class="reveal" style="--d:.4s">巷口卖烤红薯的炉子还亮着，一团橘红，替夜留了一小块暖。</p>
+        <p class="reveal" style="--d:.56s">我伸手接住一片雪。它停了一下，才化。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene s6" data-scene="5" aria-label="祝福与余味">
+    <div class="copy copy-6">
+      <p class="kicker reveal"><b>尾声</b><span class="k-line"></span>冬安</p>
+      <div class="lines">
+        <p class="lead reveal" style="--d:.08s">冬天不是一天到来的。</p>
+        <p class="reveal" style="--d:.22s">它藏在一盏灯、一碗热汤、一件晒过太阳的旧棉衣里。</p>
+        <p class="blessing reveal" style="--d:.38s">愿你在漫长的夜里，有处可暖，有人可想；<br>若都没有，就做自己的那一点火。</p>
+        <p class="reveal" style="--d:.55s">冬天很长，慢一些，也无妨。</p>
+      </div>
+      <p class="end-row reveal" style="--d:.7s"><span class="seal">冬</span><span class="e-line"></span><span>立冬 · 十月节</span></p>
+    </div>
+  </section>
+</main>
+
+<div id="whispers" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"><span id="progressFill"></span></div>
+<div id="hint" aria-hidden="true"><span>向下入冬</span><span class="hint-dot">·</span><span>轻触成霜</span><span class="hint-dot">·</span><span>长按点灯</span></div>
+
+<script>
+  document.documentElement.classList.add('js');
+</script>
+<script>
+(function(){
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const back = $('back');
+  const front = $('front');
+  const progressFill = $('progressFill');
+  const hint = $('hint');
+  const whisperLayer = $('whispers');
+  const backCtx = back.getContext('2d', { alpha: false });
+  const frontCtx = front.getContext('2d');
+
+  const TAU = Math.PI * 2;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smoothstep = (a, b, x) => {
+    const t = clamp((x - a) / (b - a), 0, 1);
+    return t * t * (3 - 2 * t);
+  };
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+  const randBetween = (r, a, b) => a + r() * (b - a);
+
+  function mulberry32(seed) {
+    return function() {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hash1(n, seed) {
+    const s = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453123;
+    return s - Math.floor(s);
+  }
+  function noise1(x, seed) {
+    const i = Math.floor(x), f = x - i;
+    const u = f * f * (3 - 2 * f);
+    return lerp(hash1(i, seed), hash1(i + 1, seed), u);
+  }
+  function fbm1(x, seed, oct) {
+    let sum = 0, amp = .5, freq = 1;
+    for (let i = 0; i < oct; i++) {
+      sum += noise1(x * freq, seed + i * 7.31) * amp;
+      freq *= 2.03; amp *= .5;
+    }
+    return sum;
+  }
+  const mixColor = (a, b, t) => [
+    lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)
+  ];
+  const rgba = (c, a) => `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
+
+  const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
+  let reduce = reduceQuery.matches;
+  if (reduceQuery.addEventListener) reduceQuery.addEventListener('change', e => { reduce = e.matches; });
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const MOTION = () => reduce ? .22 : 1;
+
+  let W = 0, H = 0, DPR = 1;
+  let ridges = [], stars = [], clouds = [], mist = [], reeds = [], snow = [];
+  let tree = null, groundBank = null, nearBank = null, pond = null, house = null;
+  let snowTarget = 0, activeSnow = 0;
+  let lastScroll = window.scrollY || 0;
+  let lastProgress = 0;
+  let hintGone = false, hintTimer = 0;
+  let hidden = false;
+
+  const state = {
+    time: 0,
+    targetScroll: lastScroll,
+    scroll: lastScroll,
+    progress: 0,
+    px: .5, py: .5, tx: .5, ty: .5,
+    wind: .45,
+    palette: null
+  };
+
+  const SKY = [
+    { t: 0,    top:[61,79,107],  mid:[145,135,142], low:[220,176,142], haze:[226,189,159] },
+    { t: .18,  top:[44,61,88],   mid:[108,107,125], low:[186,151,137], haze:[199,163,142] },
+    { t: .40,  top:[24,38,64],   mid:[60,71,96],    low:[117,108,118], haze:[138,124,126] },
+    { t: .62,  top:[11,23,45],   mid:[26,42,67],    low:[60,73,95],    haze:[79,88,104]  },
+    { t: .82,  top:[5,12,28],    mid:[13,27,47],    low:[35,51,74],    haze:[55,69,88]   },
+    { t: 1,    top:[2,7,17],     mid:[8,18,35],     low:[27,42,64],    haze:[45,61,82]   }
+  ];
+  function paletteAt(t) {
+    t = clamp(t, 0, 1);
+    let i = 0;
+    while (i < SKY.length - 2 && t > SKY[i + 1].t) i++;
+    const a = SKY[i], b = SKY[i + 1];
+    const k = clamp((t - a.t) / (b.t - a.t), 0, 1);
+    return {
+      top: mixColor(a.top, b.top, k),
+      mid: mixColor(a.mid, b.mid, k),
+      low: mixColor(a.low, b.low, k),
+      haze: mixColor(a.haze, b.haze, k)
+    };
+  }
+
+  /* Cached sprites — all soft light replaces per-frame shadowBlur. */
+  function radialSprite(w, h, stops) {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.min(w, h) / 2);
+    stops.forEach(s => gr.addColorStop(s[0], s[1]));
+    g.fillStyle = gr;
+    g.fillRect(0, 0, w, h);
+    return c;
+  }
+  const glowWarm = radialSprite(256, 256, [
+    [0, 'rgba(255,224,166,.82)'], [.16, 'rgba(255,195,112,.36)'],
+    [.42, 'rgba(245,157,76,.12)'], [1, 'rgba(240,145,64,0)']
+  ]);
+  const glowCool = radialSprite(256, 256, [
+    [0, 'rgba(229,244,250,.72)'], [.2, 'rgba(183,219,234,.25)'],
+    [.5, 'rgba(154,201,225,.07)'], [1, 'rgba(140,190,220,0)']
+  ]);
+  const snowSoft = radialSprite(64, 64, [
+    [0, 'rgba(255,255,255,.94)'], [.22, 'rgba(246,250,255,.75)'],
+    [.5, 'rgba(231,242,251,.20)'], [1, 'rgba(226,240,250,0)']
+  ]);
+  const mistSprite = radialSprite(256, 128, [
+    [0, 'rgba(255,255,255,.55)'], [.35, 'rgba(241,246,250,.26)'],
+    [.7, 'rgba(226,237,244,.07)'], [1, 'rgba(224,236,244,0)']
+  ]);
+  const moonHalo = radialSprite(512, 512, [
+    [0, 'rgba(255,248,219,.52)'], [.11, 'rgba(251,238,199,.30)'],
+    [.26, 'rgba(243,229,190,.10)'], [.52, 'rgba(224,227,213,.025)'], [1, 'rgba(200,218,220,0)']
+  ]);
+  function makeMoon() {
+    const c = document.createElement('canvas');
+    c.width = 192; c.height = 192;
+    const g = c.getContext('2d');
+    const cx = 96, cy = 96, r = 84;
+    const gr = g.createRadialGradient(cx - r * .25, cy - r * .3, r * .08, cx, cy, r);
+    gr.addColorStop(0, '#fffdf1');
+    gr.addColorStop(.58, '#fbf4dd');
+    gr.addColorStop(.86, '#eee6cc');
+    gr.addColorStop(1, 'rgba(219,222,207,.92)');
+    g.fillStyle = gr;
+    g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.save();
+    g.beginPath(); g.arc(cx, cy, r - 1, 0, TAU); g.clip();
+    const patches = [[-22,-20,26,.032],[31,-5,18,.026],[-5,31,23,.023],[39,36,10,.025],[-38,27,13,.018]];
+    patches.forEach(p => {
+      const pg = g.createRadialGradient(cx+p[0],cy+p[1],0,cx+p[0],cy+p[1],p[2]);
+      pg.addColorStop(0, `rgba(147,151,142,${p[3]})`);
+      pg.addColorStop(1, 'rgba(147,151,142,0)');
+      g.fillStyle = pg;
+      g.beginPath(); g.arc(cx+p[0],cy+p[1],p[2],0,TAU); g.fill();
+    });
+    g.restore();
+    return c;
+  }
+  const moonSprite = makeMoon();
+
+  function buildStars() {
+    const r = mulberry32(7103);
+    const n = clamp(Math.round(W * H / 13000), 42, 128);
+    stars = Array.from({ length: n }, () => ({
+      x: r() * W,
+      y: r() * H * .61,
+      size: randBetween(r, .35, 1.35),
+      alpha: randBetween(r, .20, .76),
+      phase: r() * TAU,
+      speed: randBetween(r, .12, .42),
+      bright: r() > .91
+    }));
+  }
+  function buildClouds() {
+    const r = mulberry32(8821);
+    clouds = Array.from({ length: 5 }, (_, i) => ({
+      x: randBetween(r, -.08, .92),
+      y: randBetween(r, .13, .42),
+      sx: randBetween(r, .30, .58),
+      sy: randBetween(r, .035, .085),
+      alpha: randBetween(r, .025, .06),
+      speed: randBetween(r, .0012, .0035),
+      phase: r() * TAU
+    }));
+  }
+
+  function ridgeY(layer, x) {
+    const n = fbm1(x * layer.freq + layer.seed * 21.7, layer.seed + 3, 5);
+    const detail = fbm1(x * layer.freq * 3.1 + layer.seed * 4.3, layer.seed + 16, 3);
+    let y = layer.base * H - layer.amp * H * (.26 + n * .82 + detail * .16);
+    if (layer.peak) {
+      const d = (x - W * layer.peak.x) / (W * layer.peak.w);
+      y -= Math.exp(-d * d * .5) * H * layer.peak.h;
+    }
+    return y;
+  }
+  function buildRidges() {
+    const defs = [
+      { base: .565, amp: .145, freq: .00175, seed: 2.7,  depth: .18, trees: 0, peak: { x: .34, h: .085, w: .19 } },
+      { base: .635, amp: .115, freq: .00245, seed: 6.1,  depth: .30, trees: .7, peak: { x: .62, h: .055, w: .14 } },
+      { base: .700, amp: .083, freq: .00345, seed: 11.4, depth: .42, trees: .45 },
+      { base: .782, amp: .058, freq: .0049,  seed: 18.8, depth: .56, trees: .20 },
+      { base: .879, amp: .039, freq: .0073,  seed: 25.2, depth: .72, trees: 0 }
+    ];
+    ridges = defs.map((layer, index) => {
+      const pad = 80;
+      const step = 15;
+      const fill = new Path2D();
+      const top = new Path2D();
+      const pts = [];
+      let first = true;
+      for (let x = -pad; x <= W + pad; x += step) {
+        const y = ridgeY(layer, x);
+        pts.push({ x, y });
+        if (first) { fill.moveTo(x, y); top.moveTo(x, y); first = false; }
+        else { fill.lineTo(x, y); top.lineTo(x, y); }
+      }
+      fill.lineTo(W + pad, H + 30);
+      fill.lineTo(-pad, H + 30);
+      fill.closePath();
+      const forest = new Path2D();
+      if (layer.trees) {
+        const r = mulberry32(100 + index * 17);
+        const gap = index === 1 ? 13 : 10;
+        for (let x = -pad + 12; x < W + pad; x += gap * randBetween(r, .65, 1.4)) {
+          const gy = ridgeY(layer, x);
+          const h = randBetween(r, 2, index === 1 ? 9 : 6);
+          forest.moveTo(x, gy + 3);
+          forest.lineTo(x + .3, gy - h);
+          if (r() > .7) {
+            forest.moveTo(x, gy - h * .45);
+            forest.lineTo(x + randBetween(r, -3.5, 3.5), gy - h * .75);
+          }
+        }
+      }
+      return { ...layer, fill, top, forest, pts, index };
+    });
+  }
+
+  function buildGround() {
+    const r = mulberry32(4029);
+    function bank(base, amp, seed, closeY) {
+      const p = new Path2D();
+      const step = 22;
+      let first = true;
+      for (let x = -50; x <= W + 50; x += step) {
+        const y = base * H + Math.sin(x * .0033 + seed) * amp * H
+          + (noise1(x * .012 + seed, seed) - .5) * amp * H * .6;
+        if (first) { p.moveTo(x, y); first = false; } else p.lineTo(x, y);
+      }
+      p.lineTo(W + 50, closeY); p.lineTo(-50, closeY); p.closePath();
+      return p;
+    }
+    groundBank = bank(.785, .022, 7.2, H + 20);
+    nearBank = bank(.893, .014, 19.4, H + 20);
+
+    const cx = W * .705, cy = H * .817;
+    const rx = W * (W < 600 ? .21 : .155), ry = H * .05;
+    const rr = mulberry32(9117);
+    const shape = new Path2D();
+    const pointCount = 52;
+    for (let i = 0; i <= pointCount; i++) {
+      const a = i / pointCount * TAU;
+      const wobble = 1 + Math.sin(a * 3 + 1.2) * .075 + Math.sin(a * 5 - .7) * .035 + Math.sin(a * 2 + 2.1) * .04;
+      const px = Math.cos(a) * rx * wobble;
+      const py = Math.sin(a) * ry * (wobble * .94 + .06);
+      if (i === 0) shape.moveTo(px, py); else shape.lineTo(px, py);
+    }
+    shape.closePath();
+    const cracks = [];
+    for (let i = 0; i < 5; i++) {
+      let a = rr() * TAU;
+      let x = randBetween(rr, -.3, .3), y = randBetween(rr, -.2, .2);
+      for (let j = 0; j < 5; j++) {
+        const nx = x + Math.cos(a) * randBetween(rr, .12, .28);
+        const ny = y + Math.sin(a) * randBetween(rr, .12, .28);
+        cracks.push({ x1: x, y1: y, x2: nx, y2: ny, w: randBetween(rr, .4, 1) });
+        if (rr() > .4) {
+          const ba = a + randBetween(rr, .45, 1.1) * (rr() > .5 ? 1 : -1);
+          cracks.push({ x1:nx, y1:ny, x2:nx+Math.cos(ba)*randBetween(rr,.07,.2), y2:ny+Math.sin(ba)*randBetween(rr,.07,.2), w:.45 });
+        }
+        x = nx; y = ny; a += randBetween(rr, -.35, .35);
+      }
+    }
+    const glints = Array.from({ length: 8 }, () => ({
+      x: randBetween(rr, -.7, .7), y: randBetween(rr, -.3, .35),
+      w: randBetween(rr, .12, .5), phase: rr() * TAU
+    }));
+    pond = { cx, cy, rx, ry, cracks, glints, shape };
+    house = { x: W * .84, y: H * .748, s: clamp(W * .019, 12, 30) };
+  }
+
+  function buildTree() {
+    const r = mulberry32(5839);
+    const segs = [];
+    function branch(x, y, ang, len, wid, depth) {
+      const pieces = depth > 3 ? 4 : 3;
+      let px = x, py = y, a = ang;
+      for (let i = 0; i < pieces; i++) {
+        const step = len / pieces;
+        a += randBetween(r, -.04, .04) - .008;
+        const nx = px + Math.cos(a) * step;
+        const ny = py + Math.sin(a) * step;
+        segs.push({
+          x1: px, y1: py, x2: nx, y2: ny,
+          w1: wid * (1 - i / pieces * .38),
+          w2: wid * (1 - (i + 1) / pieces * .38),
+          depth
+        });
+        px = nx; py = ny;
+      }
+      if (depth <= 0) return;
+      const children = depth > 4 ? 3 : 2;
+      for (let c = 0; c < children; c++) {
+        const side = c === 0 ? -1 : c === 1 ? 1 : (r() > .5 ? 1 : -1);
+        const spread = side * randBetween(r, .28, .72);
+        branch(
+          px, py, a + spread,
+          len * randBetween(r, .56, .78),
+          Math.max(.55, wid * randBetween(r, .46, .62)),
+          depth - 1
+        );
+      }
+    }
+    const compact = W < 720;
+    const lean = compact ? -.025 : -.14;
+    branch(
+      W * (compact ? 1.075 : .955),
+      H * (compact ? .925 : .94),
+      -Math.PI / 2 + lean,
+      H * (compact ? .255 : .31),
+      clamp(W * (compact ? .0045 : .0062), 2.8, 7.4),
+      compact ? 5 : 6
+    );
+    tree = { segs, phase: 1.7, alpha: compact ? .62 : .78 };
+  }
+
+  function buildReeds() {
+    const r = mulberry32(3311);
+    reeds = [];
+    const groups = [
+      { cx: .095, spread: .095, count: W < 600 ? 7 : 10, base: 1.02, minH: .18, maxH: .34 },
+      { cx: .19,  spread: .07,  count: W < 600 ? 4 : 6,  base: 1.035, minH: .13, maxH: .25 },
+      { cx: .92,  spread: .075, count: W < 600 ? 5 : 8,  base: 1.04, minH: .14, maxH: .28 },
+      { cx: .82,  spread: .06,  count: W < 600 ? 3 : 5,  base: 1.045, minH: .10, maxH: .20 }
+    ];
+    groups.forEach((g, gi) => {
+      for (let i = 0; i < g.count; i++) {
+        reeds.push({
+          x: (g.cx + randBetween(r, -g.spread, g.spread)) * W,
+          baseY: g.base * H,
+          h: randBetween(r, g.minH, g.maxH) * H,
+          lean: randBetween(r, -1.1, 1.1) * W * .044,
+          phase: r() * TAU,
+          width: randBetween(r, .7, 1.5),
+          shade: gi / 3,
+          head: randBetween(r, .65, 1)
+        });
+      }
+    });
+  }
+
+  function buildSnow() {
+    const r = mulberry32(12013);
+    const max = reduce ? 62 : clamp(Math.round(W * H / 6700), 80, 265);
+    snow = Array.from({ length: max }, () => {
+      const z = Math.pow(r(), 1.36);
+      const huge = r() > .93;
+      return {
+        x: r() * W,
+        y: r() * H,
+        z,
+        size: (lerp(1.5, 4.6, z) * (huge ? 2.5 : 1)) * clamp(W / 900, .78, 1.15),
+        vy: randBetween(r, 9, 30) * (.55 + z * 1.1),
+        drift: randBetween(r, .55, 1.35),
+        phase: r() * TAU,
+        alpha: randBetween(r, .28, .83),
+        vis: 0,
+        type: r() > .72 ? 1 : 0
+      };
+    });
+    activeSnow = 0;
+  }
+
+  function resize() {
+    W = Math.max(280, window.innerWidth);
+    H = Math.max(360, window.innerHeight);
+    let d = Math.min(window.devicePixelRatio || 1, 2);
+    const maxPixels = coarse ? 2600000 : 4600000;
+    const target = W * H * d * d;
+    if (target > maxPixels) d = Math.max(1, d * Math.sqrt(maxPixels / target));
+    DPR = Math.min(d, 2);
+    [back, front].forEach(c => {
+      c.width = Math.round(W * DPR);
+      c.height = Math.round(H * DPR);
+      c.style.width = W + 'px';
+      c.style.height = H + 'px';
+    });
+    backCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    frontCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    backCtx.imageSmoothingEnabled = true;
+    frontCtx.imageSmoothingEnabled = true;
+    buildStars();
+    buildClouds();
+    buildRidges();
+    buildGround();
+    buildTree();
+    buildReeds();
+    buildSnow();
+    state.palette = paletteAt(state.progress);
+    document.documentElement.style.setProperty('--vh', H + 'px');
+  }
+  function moonPosition(t) {
+    const motion = reduce ? .35 : 1;
+    return {
+      x: W * (.672 - .135 * t) + (state.px - .5) * W * .018 * motion,
+      y: H * (.335 - .155 * t) + (state.py - .5) * H * .012 * motion,
+      r: clamp(Math.min(W, H) * .039, 23, 45)
+    };
+  }
+
+  function drawSky(t, p, time) {
+    const b = backCtx;
+    const sky = b.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, rgba(p.top, 1));
+    sky.addColorStop(.50, rgba(p.mid, 1));
+    sky.addColorStop(.76, rgba(p.low, 1));
+    sky.addColorStop(1, rgba(mixColor(p.low, p.top, .75), 1));
+    b.fillStyle = sky;
+    b.fillRect(0, 0, W, H);
+
+    const afterglow = clamp(.26 - t * .72, 0, .26);
+    if (afterglow > .003) {
+      b.save();
+      b.globalCompositeOperation = 'screen';
+      b.globalAlpha = afterglow;
+      b.drawImage(glowWarm, W * .10, H * .36, W * .68, H * .44);
+      b.restore();
+    }
+
+    if (t < .82) {
+      b.save();
+      b.globalCompositeOperation = 'screen';
+      b.globalAlpha = smoothstep(.42, .78, t) * .055;
+      b.drawImage(glowCool, W * .36, H * .20, W * .48, H * .40);
+      b.restore();
+    }
+
+    const cloudFade = 1 - smoothstep(.48, .9, t) * .68;
+    b.save();
+    b.globalCompositeOperation = 'screen';
+    clouds.forEach(c => {
+      const drift = ((c.x + time * c.speed) % 1.2 + 1.2) % 1.2 - .1;
+      const x = drift * W;
+      const cx = x + Math.sin(time * .035 + c.phase) * W * .02;
+      const cy = c.y * H + Math.sin(time * .07 + c.phase) * 5;
+      b.globalAlpha = c.alpha * cloudFade;
+      b.drawImage(mistSprite, cx - c.sx * W / 2, cy - c.sy * H / 2, c.sx * W, c.sy * H);
+    });
+    b.restore();
+  }
+
+  function drawStars(t, time) {
+    const a = smoothstep(.16, .68, t);
+    if (a < .01) return;
+    const b = backCtx;
+    b.save();
+    b.globalCompositeOperation = 'screen';
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      const twinkle = reduce ? .8 : .58 + .42 * Math.sin(time * s.speed + s.phase);
+      const alpha = a * s.alpha * twinkle;
+      b.globalAlpha = alpha;
+      b.fillStyle = '#edf3f4';
+      b.fillRect(s.x, s.y, s.size, s.size);
+      if (s.bright && alpha > .25) {
+        b.globalAlpha = alpha * .38;
+        b.fillRect(s.x - 2.2, s.y + s.size * .3, 5.3, .6);
+        b.fillRect(s.x + s.size * .3, s.y - 2.2, .6, 5.3);
+      }
+    }
+    b.restore();
+  }
+
+  function drawMoon(t, time) {
+    const m = moonPosition(t);
+    const b = backCtx;
+    const appear = .38 + smoothstep(.0, .45, t) * .4;
+    b.save();
+    b.globalCompositeOperation = 'screen';
+    b.globalAlpha = appear * .75;
+    b.drawImage(moonHalo, m.x - m.r * 4.8, m.y - m.r * 4.8, m.r * 9.6, m.r * 9.6);
+    b.globalAlpha = appear * .24;
+    b.drawImage(glowWarm, m.x - m.r * 2.7, m.y - m.r * 2.7, m.r * 5.4, m.r * 5.4);
+    b.restore();
+
+    b.save();
+    b.globalAlpha = appear;
+    b.drawImage(moonSprite, m.x - m.r, m.y - m.r, m.r * 2, m.r * 2);
+    b.globalAlpha = appear * .15;
+    b.strokeStyle = 'rgba(248,241,216,.8)';
+    b.lineWidth = .7;
+    b.beginPath(); b.arc(m.x, m.y, m.r + 2.5, 0, TAU); b.stroke();
+    b.restore();
+    return m;
+  }
+
+  function drawMistBand(x, y, w, h, alpha) {
+    const b = backCtx;
+    b.save();
+    b.globalCompositeOperation = 'screen';
+    b.globalAlpha = alpha;
+    b.drawImage(mistSprite, x - w / 2, y - h / 2, w, h);
+    b.globalAlpha = alpha * .65;
+    b.drawImage(mistSprite, x - w * .32, y - h * .31, w * .8, h * .82);
+    b.restore();
+  }
+
+  function drawRidges(t, time) {
+    const b = backCtx;
+    const p = state.palette;
+    const dark = mixColor(p.top, [3, 7, 13], .42);
+    const warmHaze = mixColor(p.low, p.haze, .34);
+    const scrollDrift = state.progress * (reduce ? .15 : 1);
+    ridges.forEach((layer, i) => {
+      const motion = reduce ? .25 : 1;
+      const dx = (state.px - .5) * -38 * layer.depth * motion - t * 18 * layer.depth * motion;
+      const dy = (state.py - .5) * 9 * layer.depth * motion + (scrollDrift * (i - 2) * 1.3);
+      const mix = .25 + layer.depth * .69;
+      const col = mixColor(warmHaze, dark, mix);
+      b.save();
+      b.translate(dx, dy);
+      b.fillStyle = rgba(col, .98);
+      b.fill(layer.fill);
+      if (layer.trees) {
+        b.globalAlpha = .48 + layer.depth * .25;
+        b.strokeStyle = rgba(mixColor(col, dark, .35), .56);
+        b.lineWidth = .7;
+        b.stroke(layer.forest);
+      }
+      b.globalAlpha = .04 + smoothstep(.2, .8, t) * .08 + i * .006;
+      b.strokeStyle = rgba([231, 238, 235], 1);
+      b.lineWidth = .75;
+      b.stroke(layer.top);
+      b.restore();
+
+      if (i === 0 || i === 2) {
+        const mistA = (i === 0 ? .10 : .075) * (1 - smoothstep(.55, 1, t) * .35);
+        const drift = Math.sin(time * .022 + i * 1.9) * W * .035;
+        drawMistBand(W * (.5 + i * .08) + drift, H * (i === 0 ? .51 : .63), W * .72, H * .16, mistA);
+      }
+    });
+  }
+
+  function drawGround(t, time, moon) {
+    const b = backCtx;
+    const p = state.palette;
+    const snow = smoothstep(.31, .86, t);
+    const fieldTop = mixColor(p.low, [15, 22, 32], .53);
+    const fieldBottom = mixColor(p.top, [2, 5, 10], .78);
+    const g = b.createLinearGradient(0, H * .72, 0, H);
+    g.addColorStop(0, rgba(fieldTop, 1));
+    g.addColorStop(1, rgba(fieldBottom, 1));
+    b.fillStyle = g;
+    b.fill(groundBank);
+
+    if (snow > .01) {
+      b.save();
+      b.globalAlpha = snow * .38;
+      const sg = b.createLinearGradient(0, H * .77, 0, H * .96);
+      sg.addColorStop(0, 'rgba(210,224,233,.48)');
+      sg.addColorStop(.55, 'rgba(162,185,202,.15)');
+      sg.addColorStop(1, 'rgba(26,42,58,0)');
+      b.fillStyle = sg;
+      b.fill(groundBank);
+      b.restore();
+    }
+
+    /* A distant lit window appears only after the walk has turned home. */
+    const houseVis = smoothstep(.30, .56, t);
+    if (house && houseVis > .002) {
+      const s = house.s;
+      const hx = house.x, hy = house.y;
+      b.save();
+      b.globalAlpha = houseVis;
+      b.fillStyle = 'rgba(6,11,18,.70)';
+      b.beginPath();
+      b.moveTo(hx - s * 1.8, hy);
+      b.lineTo(hx - s * 1.8, hy - s);
+      b.lineTo(hx - s * .8, hy - s * 1.8);
+      b.lineTo(hx + s * .9, hy - s * 1.8);
+      b.lineTo(hx + s * 1.8, hy - s);
+      b.lineTo(hx + s * 1.8, hy);
+      b.closePath();
+      b.fill();
+      b.fillRect(hx + s * .75, hy - s * 2.5, s * .32, s * .9);
+      if (snow > .15) {
+        b.globalAlpha = houseVis * snow * .46;
+        b.strokeStyle = 'rgba(224,234,238,.8)';
+        b.lineWidth = .8;
+        b.beginPath();
+        b.moveTo(hx - s * 2.1, hy - s);
+        b.lineTo(hx - s * .8, hy - s * 1.88);
+        b.lineTo(hx + s * .9, hy - s * 1.88);
+        b.lineTo(hx + s * 2.1, hy - s);
+        b.stroke();
+        b.globalAlpha = houseVis;
+      }
+      const lit = .24 + smoothstep(.16, .62, t) * .68;
+      b.globalCompositeOperation = 'screen';
+      b.globalAlpha = houseVis * lit * .48;
+      b.drawImage(glowWarm, hx - s * 2.9, hy - s * 2.1, s * 5.8, s * 5.8);
+      b.globalAlpha = houseVis * lit;
+      b.fillStyle = 'rgba(255,203,127,.92)';
+      b.fillRect(hx - s * .55, hy - s * 1.25, s * .65, s * .55);
+      b.globalAlpha = houseVis * lit * .30;
+      b.fillStyle = 'rgba(255,223,170,.7)';
+      b.fillRect(hx + s * .65, hy - s * 1.35, s * .3, s * .4);
+      b.restore();
+    }
+
+    if (pond) {
+      const { cx, cy, rx, ry, cracks, glints, shape } = pond;
+      const ice = smoothstep(.045, .29, t);
+      b.save();
+      b.translate(cx, cy);
+      b.globalAlpha = .88;
+      b.fillStyle = 'rgba(9,17,25,.84)';
+      b.fill(shape);
+      b.save();
+      b.clip(shape);
+      const wg = b.createLinearGradient(0, -ry, 0, ry);
+      wg.addColorStop(0, rgba(mixColor(p.haze, [128, 153, 166], .3), .22));
+      wg.addColorStop(.55, 'rgba(22,37,50,.18)');
+      wg.addColorStop(1, 'rgba(5,11,17,.42)');
+      b.fillStyle = wg;
+      b.fillRect(-rx * 1.15, -ry * 1.2, rx * 2.3, ry * 2.4);
+
+      b.globalCompositeOperation = 'screen';
+      b.globalAlpha = .10 + ice * .045;
+      const mx = moon.x - cx;
+      b.drawImage(glowWarm, mx - rx * .11, -ry * 1.5, rx * .22, ry * 3.2);
+      glints.forEach((gl, gi) => {
+        const wiggle = Math.sin(time * .2 + gl.phase) * rx * .012;
+        b.globalAlpha = (.035 + ice * .04) * (1 - gi * .035);
+        b.fillStyle = 'rgba(219,235,240,.9)';
+        b.fillRect(gl.x * rx + wiggle, gl.y * ry, gl.w * rx, .65);
+      });
+      b.globalCompositeOperation = 'source-over';
+
+      b.globalAlpha = .025 + ice * .105;
+      b.fillStyle = 'rgba(185,214,226,.7)';
+      b.fill(shape);
+      b.globalAlpha = ice * .25;
+      b.strokeStyle = 'rgba(215,237,243,.8)';
+      b.lineWidth = .55;
+      cracks.forEach(c => {
+        b.beginPath();
+        b.moveTo(c.x1 * rx, c.y1 * ry);
+        b.lineTo(c.x2 * rx, c.y2 * ry);
+        b.stroke();
+      });
+      if (ice > .45) {
+        b.globalAlpha = (ice - .45) * .27;
+        b.fillStyle = 'rgba(217,229,235,.7)';
+        b.fillRect(-rx * 1.15, -ry * 1.2, rx * 2.3, ry * 2.4);
+      }
+      b.restore();
+
+      b.globalAlpha = .10 + snow * .09;
+      b.strokeStyle = 'rgba(215,231,236,.48)';
+      b.lineWidth = .7;
+      b.stroke(shape);
+      b.restore();
+    }
+
+    b.fillStyle = rgba(mixColor(p.top, [2, 5, 10], .72), .94);
+    b.fill(nearBank);
+    b.save();
+    b.globalAlpha = .15 + snow * .24;
+    b.strokeStyle = 'rgba(204,221,229,.5)';
+    b.lineWidth = .9;
+    b.stroke(nearBank);
+    b.restore();
+
+    /* thin wind-combed lines in the foreground field */
+    b.save();
+    b.globalAlpha = .055 + snow * .04;
+    b.strokeStyle = 'rgba(222,233,238,.6)';
+    b.lineWidth = .65;
+    for (let i = 0; i < 8; i++) {
+      const y = H * (.912 + i * .009);
+      const x = ((i * .137 + .05) % 1) * W;
+      b.beginPath();
+      b.moveTo(x, y);
+      b.quadraticCurveTo(x + W * .055, y - 1.4, x + W * .115, y + .4);
+      b.stroke();
+    }
+    b.restore();
+  }
+
+  function drawReeds(t, time) {
+    const b = backCtx;
+    const p = state.palette;
+    const silver = smoothstep(.35, .9, t);
+    const base = mixColor(p.haze, [212, 218, 216], .35 + silver * .32);
+    const angleMotion = MOTION();
+    reeds.forEach((r, i) => {
+      const phase = time * .43 + r.phase;
+      const gust = state.wind * Math.sin(time * .31 + r.phase * .8);
+      const sway = (Math.sin(phase) * .050 + gust * .038 + (state.px - .5) * .04) * r.h * angleMotion;
+      const tx = r.x + r.lean + sway;
+      const ty = r.baseY - r.h;
+      const cx = r.x + r.lean * .35 + sway * .22;
+      const alpha = .25 + r.shade * .16 + silver * .06;
+      b.strokeStyle = rgba(base, alpha);
+      b.lineWidth = r.width;
+      b.beginPath();
+      b.moveTo(r.x, r.baseY);
+      b.quadraticCurveTo(cx, r.baseY - r.h * .52, tx, ty);
+      b.stroke();
+      const lx = r.x + (cx - r.x) * .55;
+      const ly = r.baseY - r.h * .47;
+      b.globalAlpha = .64;
+      b.beginPath();
+      b.moveTo(lx, ly);
+      b.quadraticCurveTo(lx - 6 * angleMotion, ly - 11, lx - 13 * angleMotion, ly - 8);
+      b.stroke();
+      b.beginPath();
+      b.moveTo(lx, ly + 11);
+      b.quadraticCurveTo(lx + 7 * angleMotion, ly + 17, lx + 14 * angleMotion, ly + 12);
+      b.stroke();
+      b.globalAlpha = 1;
+      if (r.head > .66) {
+        const tipA = Math.atan2(ty - (r.baseY - r.h * .52), tx - cx);
+        b.strokeStyle = rgba(mixColor(base, [236, 235, 219], .28), alpha * .76);
+        for (let k = 0; k < 7; k++) {
+          const a = tipA + Math.PI / 2 + (k - 3) * .18 + Math.sin(time * .6 + k) * .012;
+          const len = 3.4 + (k % 3) * 2.2 + r.head * 3;
+          b.beginPath();
+          b.moveTo(tx, ty);
+          b.lineTo(tx + Math.cos(a) * len, ty + Math.sin(a) * len);
+          b.stroke();
+        }
+        b.globalAlpha = alpha * .20;
+        b.fillStyle = rgba(base, .6);
+        b.beginPath();
+        b.ellipse(tx, ty - 2, 1.7, 5.5 + r.head * 2, .12, 0, TAU);
+        b.fill();
+        b.globalAlpha = 1;
+      }
+    });
+  }
+
+  function drawTree(t, time) {
+    if (!tree) return;
+    const b = backCtx;
+    const motion = reduce ? .25 : 1;
+    const swayBase = (Math.sin(time * .48 + tree.phase) * .55 + state.wind * 1.5 + (state.px - .5) * 1.2) * motion;
+    b.save();
+    b.globalAlpha = tree.alpha;
+    b.strokeStyle = 'rgba(4,8,13,.95)';
+    b.lineCap = 'round';
+    b.lineJoin = 'round';
+    tree.segs.forEach(s => {
+      const f1 = Math.pow(clamp(1 - s.y1 / H + .04, 0, 1), 1.38);
+      const f2 = Math.pow(clamp(1 - s.y2 / H + .04, 0, 1), 1.38);
+      const dx1 = swayBase * 6.3 * f1 + Math.sin(time * .37 + s.y1 * .006) * 2.2 * f1 * motion;
+      const dx2 = swayBase * 6.3 * f2 + Math.sin(time * .37 + s.y2 * .006) * 2.2 * f2 * motion;
+      b.lineWidth = (s.w1 + s.w2) * .5;
+      b.beginPath();
+      b.moveTo(s.x1 + dx1, s.y1);
+      b.lineTo(s.x2 + dx2, s.y2);
+      b.stroke();
+    });
+    if (t > .44) {
+      b.globalAlpha = (.3 + smoothstep(.44, .84, t) * .46) * .14;
+      b.strokeStyle = 'rgba(224,236,239,.9)';
+      b.lineWidth = .6;
+      tree.segs.forEach(s => {
+        if (s.y2 > H * .42 || s.depth > 4) return;
+        const f1 = Math.pow(clamp(1 - s.y1 / H + .04, 0, 1), 1.38);
+        const f2 = Math.pow(clamp(1 - s.y2 / H + .04, 0, 1), 1.38);
+        const dx1 = swayBase * 6.3 * f1 + Math.sin(time * .37 + s.y1 * .006) * 2.2 * f1 * motion;
+        const dx2 = swayBase * 6.3 * f2 + Math.sin(time * .37 + s.y2 * .006) * 2.2 * f2 * motion;
+        b.beginPath();
+        b.moveTo(s.x1 + dx1 - .5, s.y1 - .7);
+        b.lineTo(s.x2 + dx2 - .5, s.y2 - .7);
+        b.stroke();
+      });
+    }
+    b.restore();
+  }
+  const frosts = [];
+  const lamps = [];
+  const puffs = [];
+  const MAX_FROST = 3;
+  const MAX_LAMPS = 5;
+  let lastTap = 0;
+  let whisperCount = 0;
+  const WHISPERS = [
+    '霜气停在指尖。',
+    '有一小片冬天，落在你手边。',
+    '水面又硬了一分。',
+    '把呼吸放轻。',
+    '薄冰下面，还有水在走。',
+    '冷得很安静。',
+    '像一句没说完的话。',
+    '霜花开了，又慢慢谢去。'
+  ];
+  let whisperPicks = [];
+
+  function nextWhisper() {
+    if (!whisperPicks.length) {
+      whisperPicks = WHISPERS.slice();
+      for (let i = whisperPicks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [whisperPicks[i], whisperPicks[j]] = [whisperPicks[j], whisperPicks[i]];
+      }
+    }
+    return whisperPicks.pop();
+  }
+
+  function showWhisper(x, y) {
+    const el = document.createElement('span');
+    el.className = 'whisper';
+    el.textContent = nextWhisper();
+    el.style.visibility = 'hidden';
+    el.style.left = '0px';
+    el.style.top = '0px';
+    whisperLayer.appendChild(el);
+    const ww = el.offsetWidth || 140;
+    const wh = el.offsetHeight || 26;
+    const avoid = [];
+    document.querySelectorAll('.copy, .hero-block, .masthead').forEach(node => {
+      const r = node.getBoundingClientRect();
+      if (r.bottom > 12 && r.top < H - 12 && r.right > 8 && r.left < W - 8) {
+        avoid.push({ left: r.left - 10, top: r.top - 10, right: r.right + 10, bottom: r.bottom + 10 });
+      }
+    });
+    const clampX = (v) => clamp(v, ww / 2 + 14, W - ww / 2 - 14);
+    const candidates = [
+      { x: x, y: y + 42 },
+      { x: x, y: y - wh - 38 },
+      { x: x - ww * .5 - 28, y: y + 24 },
+      { x: x + ww * .5 + 28, y: y + 24 },
+      { x: x, y: 88 },
+      { x: x, y: H - wh - 110 }
+    ];
+    let chosen = candidates[0], chosenOverlap = Infinity;
+    for (const c of candidates) {
+      const left = clampX(c.x) - ww / 2;
+      const top = clamp(c.y, 74, H - wh - 74);
+      const right = left + ww, bottom = top + wh;
+      let overlap = 0;
+      avoid.forEach(r => {
+        const ox = Math.max(0, Math.min(right, r.right) - Math.max(left, r.left));
+        const oy = Math.max(0, Math.min(bottom, r.bottom) - Math.max(top, r.top));
+        overlap += ox * oy;
+      });
+      if (overlap < chosenOverlap) {
+        chosen = { x: clampX(c.x), y: top };
+        chosenOverlap = overlap;
+      }
+    }
+    el.style.left = chosen.x + 'px';
+    el.style.top = chosen.y + 'px';
+    el.style.visibility = '';
+    whisperCount++;
+    while (whisperLayer.children.length > MAX_FROST) {
+      whisperLayer.removeChild(whisperLayer.firstElementChild);
+    }
+    window.setTimeout(() => {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, reduce ? 3400 : 5600);
+  }
+
+  function makeCrystal(x, y) {
+    const seed = (Math.random() * 1e9) | 0;
+    const r = mulberry32(seed);
+    const scale = clamp(Math.min(W, H) * (W < 600 ? .12 : .095), 44, 102) * randBetween(r, .82, 1.15);
+    const segs = [];
+    const sparks = [];
+    const arms = 6;
+    for (let a = 0; a < arms; a++) {
+      const baseAngle = a * TAU / arms + randBetween(r, -.10, .10);
+      const armLength = scale * randBetween(r, .57, 1.02);
+      let x1 = 0, y1 = 0;
+      let angle = baseAngle;
+      const steps = 4;
+      for (let s = 0; s < steps; s++) {
+        const len = armLength / steps;
+        angle += randBetween(r, -.06, .06) * (s ? 1 : 0);
+        const x2 = x1 + Math.cos(angle) * len;
+        const y2 = y1 + Math.sin(angle) * len;
+        const delay = s * .055 + .02;
+        segs.push({
+          x1, y1, x2, y2,
+          w: lerp(1.15, .32, s / steps),
+          delay
+        });
+        if (s > 0 && s < steps - 1) {
+          for (const side of [-1, 1]) {
+            if (r() > .23) {
+              const bAngle = angle + side * randBetween(r, .58, 1.0);
+              const bl = armLength * randBetween(r, .12, .24) * (1.15 - s * .12);
+              const bx2 = x2 + Math.cos(bAngle) * bl;
+              const by2 = y2 + Math.sin(bAngle) * bl;
+              segs.push({ x1: x2, y1: y2, x2: bx2, y2: by2, w: .46, delay: delay + .07 });
+              if (r() > .45) {
+                const cAngle = bAngle + side * .45;
+                segs.push({
+                  x1: bx2, y1: by2,
+                  x2: bx2 + Math.cos(cAngle) * bl * .43,
+                  y2: by2 + Math.sin(cAngle) * bl * .43,
+                  w: .3, delay: delay + .15
+                });
+              }
+            }
+          }
+        }
+        x1 = x2; y1 = y2;
+      }
+      sparks.push({
+        x: x1, y: y1,
+        size: randBetween(r, 1.1, 2.6),
+        phase: r() * TAU,
+        delay: randBetween(r, .45, .8)
+      });
+    }
+    return { x, y, scale, segs, sparks, seed };
+  }
+
+  function addFrost(x, y) {
+    const now = performance.now();
+    if (now - lastTap < 150) return;
+    lastTap = now;
+    while (frosts.length >= MAX_FROST) frosts.shift();
+    const crystal = makeCrystal(x, y);
+    frosts.push({ ...crystal, born: now, life: 6800 });
+    for (let i = 0; i < 7; i++) {
+      const a = Math.random() * TAU;
+      const sp = 3 + Math.random() * 8;
+      puffs.push({
+        x: x + Math.cos(a) * (8 + Math.random() * 24),
+        y: y + Math.sin(a) * (5 + Math.random() * 18),
+        vx: Math.cos(a) * sp,
+        vy: -5 - Math.random() * 9,
+        size: 18 + Math.random() * 24,
+        age: 0, life: 2.1 + Math.random() * 1.7,
+        phase: Math.random() * TAU
+      });
+    }
+    showWhisper(x, y);
+  }
+
+  function addLamp(x, y) {
+    let dying = null;
+    if (lamps.length >= MAX_LAMPS) {
+      dying = lamps.find(l => !l.dying);
+      if (dying) dying.dying = performance.now();
+    }
+    lamps.push({
+      x: clamp(x, 24, W - 24),
+      y: clamp(y, 50, H - 24),
+      nx: clamp(x, 24, W - 24) / W,
+      ny: clamp(y, 50, H - 24) / H,
+      born: performance.now(),
+      dying: null,
+      seed: Math.random() * TAU,
+      scale: clamp(Math.min(W, H) * .024, 9, 17)
+    });
+  }
+
+  function snowFraction(t) {
+    const base = lerp(.055, .92, smoothstep(.10, .78, t));
+    return base * (reduce ? .48 : 1);
+  }
+
+  function updateSnow(dt, time, t) {
+    const desired = snow.length * snowFraction(t);
+    const motion = reduce ? .42 : 1;
+    const wind = state.wind;
+    for (let i = 0; i < snow.length; i++) {
+      const p = snow[i];
+      const target = i < desired ? 1 : 0;
+      p.vis += (target - p.vis) * Math.min(1, dt * 1.25);
+      if (p.vis < .002) continue;
+      const air = .50 + p.z * .9;
+      p.x += (7 + wind * 18) * p.drift * air * dt * motion
+        + Math.sin(time * (.45 + p.z * .15) + p.phase) * (1.4 + p.z * 3.3) * dt * motion
+        + (state.px - .5) * 27 * p.z * dt * motion;
+      p.y += p.vy * dt * motion;
+      const edge = 32 + p.size * 2;
+      if (p.y > H + edge) {
+        p.y = -edge;
+        p.x = Math.random() * (W + 80) - 40;
+      }
+      if (p.x > W + edge) p.x = -edge;
+      else if (p.x < -edge) p.x = W + edge;
+    }
+  }
+
+  function drawSnow() {
+    const f = frontCtx;
+    const windshift = state.wind * 3;
+    for (let i = 0; i < snow.length; i++) {
+      const p = snow[i];
+      if (p.vis < .008) continue;
+      const sz = p.size * 3.5;
+      const alpha = p.vis * p.alpha * (.38 + p.z * .62);
+      f.globalAlpha = alpha * (p.z > .85 ? .64 : 1);
+      f.drawImage(
+        snowSoft,
+        p.x - sz * .5 + windshift,
+        p.y - sz * .5,
+        sz,
+        sz
+      );
+    }
+    f.globalAlpha = 1;
+  }
+
+  function drawFrosts(dt, now) {
+    const f = frontCtx;
+    for (let i = puffs.length - 1; i >= 0; i--) {
+      const p = puffs[i];
+      p.age += dt;
+      if (p.age > p.life) { puffs.splice(i, 1); continue; }
+      p.x += p.vx * dt * (reduce ? .4 : 1);
+      p.y += p.vy * dt * (reduce ? .4 : 1);
+      p.vy -= 1.8 * dt;
+      const k = p.age / p.life;
+      f.save();
+      f.globalCompositeOperation = 'screen';
+      f.globalAlpha = (1 - k) * .075;
+      const s = p.size * (1 + k * 1.4);
+      f.drawImage(glowCool, p.x - s / 2, p.y - s / 2, s, s);
+      f.restore();
+    }
+
+    for (let i = frosts.length - 1; i >= 0; i--) {
+      const fr = frosts[i];
+      const age = (now - fr.born) / 1000;
+      if (age > fr.life / 1000) { frosts.splice(i, 1); continue; }
+      const grow = easeOut(clamp(age / 1.05, 0, 1));
+      const fade = 1 - smoothstep(4.6, 6.8, age);
+      if (fade <= .001) continue;
+
+      f.save();
+      f.translate(fr.x, fr.y);
+      f.globalCompositeOperation = 'screen';
+      f.globalAlpha = grow * fade * .11;
+      const haloSize = fr.scale * 4.4;
+      f.drawImage(glowCool, -haloSize / 2, -haloSize / 2, haloSize, haloSize);
+      f.globalCompositeOperation = 'source-over';
+
+      for (let s = 0; s < fr.segs.length; s++) {
+        const seg = fr.segs[s];
+        const local = clamp((grow - seg.delay) / .52, 0, 1);
+        if (local <= 0) continue;
+        const k = easeOut(local);
+        const x2 = lerp(seg.x1, seg.x2, k);
+        const y2 = lerp(seg.y1, seg.y2, k);
+        f.globalAlpha = fade * .30 * (1 - seg.delay * .22);
+        f.strokeStyle = 'rgba(187,226,241,.8)';
+        f.lineWidth = seg.w * 2.8;
+        f.beginPath();
+        f.moveTo(seg.x1, seg.y1);
+        f.lineTo(x2, y2);
+        f.stroke();
+        f.globalAlpha = fade * .88;
+        f.strokeStyle = 'rgba(225,244,249,.94)';
+        f.lineWidth = seg.w;
+        f.beginPath();
+        f.moveTo(seg.x1, seg.y1);
+        f.lineTo(x2, y2);
+        f.stroke();
+      }
+
+      fr.sparks.forEach(sp => {
+        const a = clamp((grow - sp.delay) / .36, 0, 1);
+        if (a <= 0) return;
+        const tw = .56 + .44 * Math.sin(state.time * 1.1 + sp.phase);
+        f.globalAlpha = fade * a * (.34 + tw * .35);
+        f.fillStyle = 'rgba(232,248,252,.92)';
+        f.fillRect(sp.x - sp.size * 1.6, sp.y - .4, sp.size * 3.2, .8);
+        f.fillRect(sp.x - .4, sp.y - sp.size * 1.6, .8, sp.size * 3.2);
+      });
+      f.globalAlpha = fade * .15 * grow;
+      f.strokeStyle = 'rgba(223,243,248,.8)';
+      f.lineWidth = .55;
+      f.beginPath();
+      f.arc(0, 0, fr.scale * .31, 0, TAU);
+      f.stroke();
+      f.restore();
+    }
+  }
+
+  function drawLamps(now) {
+    const f = frontCtx;
+    for (let i = lamps.length - 1; i >= 0; i--) {
+      const l = lamps[i];
+      if (l.dying) {
+        const dieAge = (now - l.dying) / 1000;
+        if (dieAge > 1.25) { lamps.splice(i, 1); continue; }
+      }
+      l.x = l.nx * W;
+      l.y = l.ny * H;
+      const age = (now - l.born) / 1000;
+      const inAlpha = smoothstep(0, .8, age);
+      let alpha = inAlpha;
+      if (l.dying) alpha *= 1 - smoothstep(0, 1.25, (now - l.dying) / 1000);
+      const swing = Math.sin(state.time * .53 + l.seed) * .045 * (reduce ? .25 : 1) + state.wind * .01;
+      const s = l.scale;
+      const breathe = 1 + Math.sin(state.time * .83 + l.seed) * .022 + Math.sin(state.time * .29 + l.seed * 1.7) * .018;
+      const pivotX = l.x, pivotY = l.y - s * 2.1;
+      f.save();
+      f.translate(pivotX, pivotY);
+      f.rotate(swing);
+      f.globalCompositeOperation = 'screen';
+      const gs = s * 10 * breathe;
+      f.globalAlpha = alpha * .43;
+      f.drawImage(glowWarm, -gs / 2, s * 1.1 - gs / 2, gs, gs);
+      f.globalAlpha = alpha * .16;
+      f.drawImage(glowWarm, -gs * .85, s * 1.1 - gs * .85, gs * 1.7, gs * 1.7);
+      f.globalCompositeOperation = 'source-over';
+
+      f.globalAlpha = alpha * .38;
+      f.strokeStyle = 'rgba(227,208,175,.8)';
+      f.lineWidth = .65;
+      f.beginPath();
+      f.moveTo(0, 0);
+      f.lineTo(0, s * 1.2);
+      f.stroke();
+
+      f.globalAlpha = alpha;
+      f.fillStyle = 'rgba(249,206,135,.96)';
+      f.beginPath();
+      f.ellipse(0, s * 2.05, s * .69, s * 1.02, 0, 0, TAU);
+      f.fill();
+      f.globalAlpha = alpha * .76;
+      f.fillStyle = 'rgba(255,237,194,.95)';
+      f.beginPath();
+      f.ellipse(-s * .12, s * 1.95, s * .28, s * .61, -.05, 0, TAU);
+      f.fill();
+
+      f.globalAlpha = alpha * .8;
+      f.fillStyle = 'rgba(69,45,29,.82)';
+      f.fillRect(-s * .44, s * .98, s * .88, s * .28);
+      f.fillRect(-s * .36, s * 3.03, s * .72, s * .24);
+      f.globalAlpha = alpha * .34;
+      f.strokeStyle = 'rgba(92,58,32,.8)';
+      f.lineWidth = .55;
+      for (let k = -1; k <= 1; k++) {
+        f.beginPath();
+        f.moveTo(k * s * .28, s * 1.22);
+        f.quadraticCurveTo(k * s * .4, s * 2.05, k * s * .22, s * 2.9);
+        f.stroke();
+      }
+      f.globalAlpha = alpha * .65;
+      f.fillStyle = 'rgba(255,234,188,.85)';
+      f.beginPath();
+      f.arc(0, s * .18, .85, 0, TAU);
+      f.fill();
+      f.restore();
+    }
+    frontCtx.globalAlpha = 1;
+  }
+
+  function drawFront(dt, time, t, now) {
+    const f = frontCtx;
+    f.clearRect(0, 0, W, H);
+    updateSnow(dt, time, t);
+    drawSnow();
+    drawFrosts(dt, now);
+    drawLamps(now);
+    f.globalAlpha = 1;
+  }
+  function drawBack(t, time) {
+    const b = backCtx;
+    b.setTransform(DPR, 0, 0, DPR, 0, 0);
+    b.globalAlpha = 1;
+    b.globalCompositeOperation = 'source-over';
+    state.palette = paletteAt(t);
+    drawSky(t, state.palette, time);
+    drawStars(t, time);
+    const moon = drawMoon(t, time);
+    drawRidges(t, time);
+    drawGround(t, time, moon);
+    drawTree(t, time);
+    drawReeds(t, time);
+  }
+
+  let lastFrame = performance.now();
+  let targetProgress = 0;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (hidden) { lastFrame = now; return; }
+    const dt = Math.min(.05, Math.max(0, (now - lastFrame) / 1000));
+    lastFrame = now;
+    if (dt <= 0) return;
+
+    state.time += dt;
+    const sy = window.scrollY || window.pageYOffset || 0;
+    state.targetScroll = sy;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    targetProgress = clamp(sy / maxScroll, 0, 1);
+    const follow = 1 - Math.exp(-dt * (reduce ? 8.5 : 3.7));
+    state.progress += (targetProgress - state.progress) * follow;
+    if (Math.abs(targetProgress - state.progress) < .0002) state.progress = targetProgress;
+
+    const pointerFollow = 1 - Math.exp(-dt * 3.2);
+    state.px += (state.tx - state.px) * pointerFollow;
+    state.py += (state.ty - state.py) * pointerFollow;
+    const windTarget = .46 + Math.sin(state.time * .17) * .21
+      + Math.sin(state.time * .071 + 1.8) * .13 + (state.px - .5) * .38;
+    state.wind += (windTarget - state.wind) * (1 - Math.exp(-dt * 1.25));
+    state.wind = clamp(state.wind, 0, 1.1);
+
+    progressFill.style.transform = 'scaleY(' + Math.max(.004, targetProgress).toFixed(4) + ')';
+
+    drawBack(state.progress, state.time);
+    drawFront(dt, state.time, state.progress, now);
+
+    if (!hintGone && sy > 24) hideHint();
+  }
+
+  function hideHint() {
+    if (hintGone) return;
+    hintGone = true;
+    hint.classList.add('is-gone');
+    clearTimeout(hintTimer);
+  }
+
+  const gesture = {
+    active: false, id: null, x: 0, y: 0, start: 0,
+    moved: false, long: false, timer: 0, touch: false
+  };
+  let recenterTimer = 0;
+  let lastTouchDown = 0;
+  const LONG_PRESS = 620;
+
+  function cancelLong() {
+    if (gesture.timer) {
+      clearTimeout(gesture.timer);
+      gesture.timer = 0;
+    }
+  }
+  function endGesture() {
+    cancelLong();
+    gesture.active = false;
+    gesture.id = null;
+  }
+
+  window.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const now = performance.now();
+    gesture.active = true;
+    gesture.id = e.pointerId;
+    gesture.x = e.clientX;
+    gesture.y = e.clientY;
+    gesture.start = now;
+    gesture.moved = false;
+    gesture.long = false;
+    gesture.touch = e.pointerType === 'touch';
+    if (gesture.touch) lastTouchDown = now;
+    state.tx = clamp(e.clientX / W, 0, 1);
+    state.ty = clamp(e.clientY / H, 0, 1);
+    if (gesture.timer) clearTimeout(gesture.timer);
+    const x = gesture.x, y = gesture.y, id = gesture.id;
+    gesture.timer = window.setTimeout(() => {
+      if (!gesture.active || gesture.id !== id || gesture.moved) return;
+      gesture.long = true;
+      addLamp(x, y);
+      hideHint();
+    }, LONG_PRESS);
+  }, { passive: true });
+
+  window.addEventListener('pointermove', (e) => {
+    state.tx = clamp(e.clientX / W, 0, 1);
+    state.ty = clamp(e.clientY / H, 0, 1);
+    if (!gesture.active || e.pointerId !== gesture.id) return;
+    if (!gesture.moved && Math.hypot(e.clientX - gesture.x, e.clientY - gesture.y) > 9) {
+      gesture.moved = true;
+      cancelLong();
+    }
+  }, { passive: true });
+
+  window.addEventListener('pointerup', (e) => {
+    if (!gesture.active || e.pointerId !== gesture.id) return;
+    const duration = performance.now() - gesture.start;
+    if (!gesture.moved && !gesture.long && duration < 520) {
+      addFrost(clamp(e.clientX, 12, W - 12), clamp(e.clientY, 12, H - 12));
+      hideHint();
+    }
+    endGesture();
+    if (gesture.touch) {
+      clearTimeout(recenterTimer);
+      recenterTimer = window.setTimeout(() => {
+        state.tx = .5; state.ty = .5;
+      }, 900);
+    }
+  }, { passive: true });
+
+  function onCancel(e) {
+    if (!gesture.active || (e && e.pointerId !== gesture.id)) return;
+    endGesture();
+    if (gesture.touch) {
+      clearTimeout(recenterTimer);
+      recenterTimer = window.setTimeout(() => { state.tx = .5; state.ty = .5; }, 700);
+    }
+  }
+  window.addEventListener('pointercancel', onCancel, { passive: true });
+  window.addEventListener('blur', () => { endGesture(); state.tx = .5; state.ty = .5; });
+
+  document.addEventListener('pointerleave', (e) => {
+    if (e.pointerType === 'mouse') { state.tx = .5; state.ty = .5; }
+  }, { passive: true });
+
+  document.addEventListener('contextmenu', (e) => {
+    if (performance.now() - lastTouchDown < 1600) e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('scroll', () => {
+    if (!hintGone) {
+      const sy = window.scrollY || window.pageYOffset;
+      if (sy > 24) hideHint();
+    }
+  }, { passive: true });
+
+  /* Progressive text reveals, one graceful entrance per scene. */
+  const scenes = Array.from(document.querySelectorAll('.scene'));
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-live');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: [0.28, 0.42, 0.56] });
+    scenes.forEach(scene => revealObserver.observe(scene));
+    requestAnimationFrame(() => {
+      scenes.forEach(scene => {
+        const rect = scene.getBoundingClientRect();
+        if (rect.top < innerHeight * .58 && rect.bottom > innerHeight * .15) {
+          scene.classList.add('is-live');
+        }
+      });
+    });
+  } else {
+    scenes.forEach(scene => scene.classList.add('is-live'));
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    hidden = document.hidden;
+    if (!hidden) {
+      lastFrame = performance.now();
+      state.time += .001;
+    }
+  });
+
+  let resizeTimer = 0;
+  function scheduleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      const oldW = W || 1, oldH = H || 1;
+      frosts.forEach(f => {
+        f.x = clamp(f.x / oldW * window.innerWidth, 20, window.innerWidth - 20);
+        f.y = clamp(f.y / oldH * window.innerHeight, 20, window.innerHeight - 20);
+      });
+      puffs.forEach(p => {
+        p.x = clamp(p.x / oldW * window.innerWidth, 0, window.innerWidth);
+        p.y = clamp(p.y / oldH * window.innerHeight, 0, window.innerHeight);
+      });
+      resize();
+      lastFrame = performance.now();
+    }, 170);
+  }
+  window.addEventListener('resize', scheduleResize, { passive: true });
+  window.addEventListener('orientationchange', scheduleResize, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleResize, { passive: true });
+  }
+
+  hintTimer = window.setTimeout(hideHint, 9500);
+  resize();
+  state.progress = clamp((window.scrollY || 0) / Math.max(1, document.documentElement.scrollHeight - window.innerHeight), 0, 1);
+  {
+    const m = moonPosition(state.progress);
+    // First paint before the next animation frame, so the sky never flashes white.
+    drawBack(state.progress, state.time);
+    drawFront(0, state.time, state.progress, performance.now());
+    void m;
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
